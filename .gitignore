@@ -41,9 +41,9 @@ __pycache__/
 
 # ML data
 dataset/
-frames/
-uploads/
-saved_models/
+# frames/
+# uploads/
+# saved_models/
 
 # environment
 .env
