@@ -22,7 +22,7 @@ venv/
 Thumbs.db
 
 # Model weights (optional if large)
-*.h5
+# *.h5
 *.pt
 *.pth
 
