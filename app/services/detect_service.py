@@ -7,11 +7,29 @@ import os
 
 model = get_model()
 
+
+def clear_frames_folder():
+    frames_dir = "frames"
+
+    if os.path.exists(frames_dir):
+        for file in os.listdir(frames_dir):
+            file_path = os.path.join(frames_dir, file)
+            try:
+                os.remove(file_path)
+            except:
+                pass
+
+
 def detect_deepfake(video_path):
 
     frames = extract_frames(video_path)
 
     if len(frames) == 0:
+
+        # cleanup video
+        if os.path.exists(video_path):
+            os.remove(video_path)
+
         return {
             "deepfake_score": 0,
             "result": "No Frames Detected",
@@ -23,7 +41,7 @@ def detect_deepfake(video_path):
 
     os.makedirs("outputs", exist_ok=True)
 
-    # process every 8th frame (better coverage than 10)
+    # process every 8th frame
     for i, frame in enumerate(frames[::8]):
 
         input_frame = frame / 255.0
@@ -34,8 +52,9 @@ def detect_deepfake(video_path):
         score = float(prediction[0][0])
         scores.append(score)
 
-        # generate heatmap for the first frame only
+        # generate heatmap only for first frame
         if i == 0:
+
             heatmap = generate_heatmap(model, frame)
 
             visual = overlay_heatmap(frame, heatmap)
@@ -45,6 +64,13 @@ def detect_deepfake(video_path):
             cv2.imwrite(heatmap_path, visual)
 
     if len(scores) == 0:
+
+        # cleanup
+        if os.path.exists(video_path):
+            os.remove(video_path)
+
+        clear_frames_folder()
+
         return {
             "deepfake_score": 0,
             "result": "Prediction Failed",
@@ -53,13 +79,21 @@ def detect_deepfake(video_path):
 
     avg_score = sum(scores) / len(scores)
 
-    # better classification logic
     if avg_score > 0.65:
         result = "Fake"
     elif avg_score < 0.35:
         result = "Real"
     else:
         result = "Uncertain"
+
+    # 🔥 CLEANUP SECTION
+
+    # delete uploaded video
+    if os.path.exists(video_path):
+        os.remove(video_path)
+
+    # delete extracted frames
+    clear_frames_folder()
 
     return {
         "deepfake_score": round(float(avg_score), 3),
