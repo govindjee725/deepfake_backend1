@@ -7,22 +7,28 @@ FRAME_PATH = "frames"
 data = []
 labels = []
 
-for img in os.listdir(FRAME_PATH):
+for label_name in os.listdir(FRAME_PATH):
 
-    path = os.path.join(FRAME_PATH, img)
+    folder_path = os.path.join(FRAME_PATH, label_name)
 
-    image = cv2.imread(path)
+    for img in os.listdir(folder_path):
 
-    image = cv2.resize(image, (224,224))
+        path = os.path.join(folder_path, img)
 
-    image = image / 255.0
+        image = cv2.imread(path)
 
-    data.append(image)
+        if image is None:
+            continue
 
-    if "fake" in img:
-        labels.append(1)
-    else:
-        labels.append(0)
+        image = cv2.resize(image, (224,224))
+        image = image / 255.0
+
+        data.append(image)
+
+        if label_name == "fake":
+            labels.append(1)
+        else:
+            labels.append(0)
 
 X = np.array(data)
 y = np.array(labels)

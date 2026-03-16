@@ -42,7 +42,7 @@ def detect_deepfake(video_path):
     os.makedirs("outputs", exist_ok=True)
 
     # process every 8th frame
-    for i, frame in enumerate(frames[::8]):
+    for i, frame in enumerate(frames[::30]):
 
         input_frame = frame / 255.0
         input_frame = np.expand_dims(input_frame, axis=0)
@@ -79,9 +79,9 @@ def detect_deepfake(video_path):
 
     avg_score = sum(scores) / len(scores)
 
-    if avg_score > 0.65:
+    if avg_score > 0.5:
         result = "Fake"
-    elif avg_score < 0.35:
+    elif avg_score < 0.5:
         result = "Real"
     else:
         result = "Uncertain"
