@@ -127,7 +127,7 @@ def extract_frames(video_path, label, split):
 
                 face = rgb[y:y+h, x:x+w]
 
-                face = cv2.resize(face, (224,224))
+                face = cv2.resize(face, (48,48))
 
                 filename = f"{label}_{video_name}_{saved}.jpg"
 

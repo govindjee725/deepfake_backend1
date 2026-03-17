@@ -20,7 +20,7 @@ for label_name in os.listdir(FRAME_PATH):
         if image is None:
             continue
 
-        image = cv2.resize(image, (224,224))
+        image = cv2.resize(image, (48,48))
         image = image / 255.0
 
         data.append(image)

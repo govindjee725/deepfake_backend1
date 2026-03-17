@@ -5,7 +5,9 @@ import numpy as np
 import cv2
 import os
 
-model = get_model()
+# def detect_deepfake(video_path):
+
+#     model = get_model()   
 
 
 def clear_frames_folder():
@@ -22,14 +24,11 @@ def clear_frames_folder():
 
 def detect_deepfake(video_path):
 
+    model = get_model()
+
     frames = extract_frames(video_path)
 
     if len(frames) == 0:
-
-        # cleanup video
-        if os.path.exists(video_path):
-            os.remove(video_path)
-
         return {
             "deepfake_score": 0,
             "result": "No Frames Detected",
@@ -41,36 +40,26 @@ def detect_deepfake(video_path):
 
     os.makedirs("outputs", exist_ok=True)
 
-    # process every 8th frame
-    for i, frame in enumerate(frames[::30]):
+    for i, frame in enumerate(frames[::10]):
 
         input_frame = frame / 255.0
         input_frame = np.expand_dims(input_frame, axis=0)
+
+        if input_frame.shape != (1,224,224,3):
+            continue
 
         prediction = model.predict(input_frame, verbose=0)
 
         score = float(prediction[0][0])
         scores.append(score)
 
-        # generate heatmap only for first frame
         if i == 0:
-
             heatmap = generate_heatmap(model, frame)
-
             visual = overlay_heatmap(frame, heatmap)
-
             heatmap_path = "outputs/heatmap_result.jpg"
-
             cv2.imwrite(heatmap_path, visual)
 
     if len(scores) == 0:
-
-        # cleanup
-        if os.path.exists(video_path):
-            os.remove(video_path)
-
-        clear_frames_folder()
-
         return {
             "deepfake_score": 0,
             "result": "Prediction Failed",
@@ -79,15 +68,7 @@ def detect_deepfake(video_path):
 
     avg_score = sum(scores) / len(scores)
 
-    if avg_score > 0.5:
-        result = "Fake"
-    elif avg_score < 0.5:
-        result = "Real"
-    else:
-        result = "Uncertain"
-
-    # 🔥 CLEANUP SECTION
-
+    result = "Fake" if avg_score > 0.5 else "Real"
     # delete uploaded video
     if os.path.exists(video_path):
         os.remove(video_path)
@@ -100,3 +81,4 @@ def detect_deepfake(video_path):
         "result": result,
         "heatmap_image": heatmap_path
     }
+    # 🔥 CLEANUP SECTION

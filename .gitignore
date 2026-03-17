@@ -41,7 +41,7 @@ __pycache__/
 
 # ML data
 dataset/
-# frames/
+frames/
 # uploads/
 # saved_models/
 

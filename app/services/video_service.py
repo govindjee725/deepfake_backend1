@@ -23,13 +23,18 @@ def extract_frames(video_path):
 
             if faces:
                 x, y, w, h = faces[0]['box']
+                x, y = max(0, x), max(0, y)
 
-                # crop face
                 face = frame[y:y+h, x:x+w]
 
-                if face.size != 0:
+                if face is not None and face.size > 0:
                     face = cv2.resize(face, (224,224))
                     frames.append(face)
+
+            else:
+    # 🔥 fallback → use full frame
+                frame_resized = cv2.resize(frame, (224,224))
+                frames.append(frame_resized)
 
         count += 1
 
