@@ -8,11 +8,8 @@ __pycache__/
 venv/
 .env/
 
-# VSCode settings
+# VSCode
 .vscode/
-
-# Environment variables
-.env
 
 # Logs
 *.log
@@ -21,29 +18,27 @@ venv/
 .DS_Store
 Thumbs.db
 
-# Model weights (optional if large)
-# *.h5
+# ML DATA (VERY IMPORTANT)
+dataset/
+frames/
+training/
+temp_frames/
+temp_video/
+
+# Model weights (ignore large files)
+*.h5
 *.pt
 *.pth
+
+# OR ignore full folder (better)
+saved_models/
+
+# Uploads (temporary files)
+uploads/
 
 # Build files
 build/
 dist/
 
-# Jupyter Notebook checkpoints
+# Jupyter
 .ipynb_checkpoints/
-
-
-# Python
-venv/
-__pycache__/
-*.pyc
-
-# ML data
-dataset/
-frames/
-# uploads/
-# saved_models/
-
-# environment
-.env
